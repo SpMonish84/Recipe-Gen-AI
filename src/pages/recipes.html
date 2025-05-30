@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes - Recipe AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>Recipe AI</h1>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Dashboard</span></a>
+                <a href="home.html" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
+                <a href="recipes.html" class="nav-link active"><i class="fas fa-utensils"></i><span>Recipes</span></a>
+                <a href="favorites.html" class="nav-link"><i class="fas fa-heart"></i><span>Favorites</span></a>
+                <a href="ingredients.html" class="nav-link"><i class="fas fa-carrot"></i><span>Ingredients</span></a>
+                <a href="upload.html" class="nav-link"><i class="fas fa-upload"></i><span>Upload</span></a>
+            </div>
+        </nav>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <header>
+                    <h1>Recipes</h1>
+                    <p class="subtitle">Browse and manage your recipe collection</p>
+                    <button class="btn btn-primary" id="create-recipe-btn">Create New Recipe</button>
+                </header>
+                <div class="recipes-container">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="recipe-search" placeholder="Search recipes...">
+                        <button class="clear-search" id="clear-search"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div id="recipes-grid"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Recipe Details Modal -->
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-recipe-name"></h2>
+                <button class="favorite-btn" id="modal-favorite-btn">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-description"></div>
+                <div class="recipe-ingredients"></div>
+                <div class="recipe-instructions"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Recipe</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this recipe? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-delete">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Recipe Modal -->
+    <div id="create-recipe-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Recipe</h2>
+                <button class="close-modal" data-modal-id="create-recipe-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="create-recipe-form">
+                    <div class="form-group">
+                        <label for="recipe-name">Recipe Name:</label>
+                        <input type="text" id="recipe-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipe-description">Description:</label>
+                        <textarea id="recipe-description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="ingredients">Ingredients (one per line):</label>
+                        <textarea id="ingredients" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="instructions">Instructions:</label>
+                        <textarea id="instructions" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Recipe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../components/Recipes.js"></script>
+</body>
+</html> 
