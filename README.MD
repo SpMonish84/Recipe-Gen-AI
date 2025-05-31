@@ -1,25 +1,27 @@
 # AI Recipe Generator 🍳
 
-A modern web application that generates delicious recipes using artificial intelligence. Simply tell the app what you'd like to cook, and it will provide you with a detailed, easy-to-follow recipe.
+A modern web application that helps you manage your ingredients and generate delicious recipes using artificial intelligence.
 
 ## 🌟 Features
 
-- **AI-Powered Recipe Generation**: Get instant recipes for any dish you can imagine
-- **Interactive Typewriter Effect**: Watch recipes appear with a satisfying typing animation
-- **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices
-- **User-Friendly Interface**: Clean and intuitive design for the best user experience
-- **Real-time Generation**: Get your recipe instantly without any waiting
-- **Recipe Management**: Save and manage your favorite recipes locally
-- **Dark/Light Mode**: Toggle between dark and light themes for comfortable viewing
-- **Recipe Collection**: View all your saved recipes in one place
-- **Favorites System**: Mark and filter your favorite recipes
-- **Local Storage**: All recipes are saved locally in your browser
+- **AI-Powered Recipe Generation**: Get instant recipes for any dish you can imagine.
+- **Generate from Pantry**: Create recipes using the ingredients you currently have in your pantry.
+- **Upload Recipe/Ingredients**: Upload images or documents to extract recipes and ingredients automatically using AI.
+- **Pantry Management**: Organize and track your pantry items with categories.
+- **Interactive Dashboard**: Get an overview of your recipes, pantry, expiring ingredients, and AI-powered recipe suggestions.
+- **Interactive Typewriter Effect**: Watch generated recipes appear with a satisfying typing animation.
+- **Responsive Design**: Works perfectly on desktop, tablet, and mobile devices.
+- **User-Friendly Interface**: Clean and intuitive design with consistent styling across pages.
+- **Recipe Management**: Save, view, and manage your recipe collection.
+- **Favorites System**: Mark and filter your favorite recipes.
+- **Local Storage**: All recipe and pantry data is saved locally in your browser.
+- **Notifications**: Get feedback on actions like saving or generating recipes.
 
 ## 🚀 Quick Start
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/recipe-generator.git
+   git clone https://github.com/SpMonish84/Recipe-Gen-AI
    cd recipe-generator
    ```
 
@@ -37,7 +39,7 @@ A modern web application that generates delicious recipes using artificial intel
    ```
    Then visit: http://localhost:5500
 
-3. Open your web browser and start generating recipes!
+3. Open your web browser and start managing your pantry and generating recipes!
 
 ## 🛠️ Technologies Used
 
@@ -47,6 +49,7 @@ A modern web application that generates delicious recipes using artificial intel
   - JavaScript (ES6+)
   - Typewriter.js for animations
   - Axios for API requests
+  - Chart.js for data visualization
   - LocalStorage API for data persistence
   - CSS Grid and Flexbox for layouts
   - CSS Variables for theming
@@ -54,7 +57,7 @@ A modern web application that generates delicious recipes using artificial intel
   - Font Awesome for icons
 
 - **Backend:**
-  - SheCodes AI API for recipe generation
+  - SheCodes AI API for recipe generation and content analysis
 
 - **Development Tools:**
   - Git for version control
@@ -65,45 +68,40 @@ A modern web application that generates delicious recipes using artificial intel
 
 ```
 recipe-generator/
-├── index.html          # Main HTML file
+├── index.html          # Main entry point
 ├── src/
-│   ├── styles.css     # Styling
-│   ├── script.js      # Application logic
-│   ├── components/    # Reusable components
+│   ├── styles.css     # Global styling
+│   ├── script.js      # Core application logic / shared functions
+│   ├── components/    # Reusable JavaScript components
+│   │   ├── Dashboard.js
 │   │   ├── Recipes.js
-│   │   └── FavoriteRecipes.js
-│   └── pages/         # Page components
+│   │   ├── Pantry.js
+│   │   ├── Upload.js
+│   │   ├── FavoriteRecipes.js
+│   │   └── CreateRecipe.js
+│   └── pages/         # HTML files for each page
 │       ├── home.html
+│       ├── dashboard.html
 │       ├── recipes.html
-│       └── favorites.html
-└── README.md          # Documentation
+│       ├── favorites.html
+│       ├── pantry.html
+│       └── upload.html
+└── README.md          # Project documentation
 ```
 
 ## 💡 How to Use
 
-1. Enter the type of recipe you want (e.g., "chocolate cake", "vegetarian pasta", "chicken curry")
-2. Click the "Generate Recipe" button
-3. Watch as the AI generates your recipe with a typewriter effect
-4. Save the recipe to your collection if you like it
-5. Access your saved recipes from the Recipes page
-6. Mark recipes as favorites for quick access
+- **Home:** Enter ingredients or a dish you want to cook and click "Generate" to get a recipe from AI.
+- **Recipes:** View your saved recipes. Use the search bar to find recipes, mark favorites, or delete recipes. Generate recipes from your pantry items.
+- **Favorites:** See only your favorited recipes.
+- **Pantry:** Manage your ingredient inventory, categorized for easy tracking. Add new items and their expiry dates.
+- **Upload:** Upload images or documents containing recipes or ingredient lists to have the AI extract and save them.
+- **Dashboard:** Get an overview of your recipe and pantry stats, see expiring ingredients, and get AI recipe suggestions.
 
 ## 🔧 Configuration
 
-The application uses the SheCodes AI API for recipe generation. The API key is already configured in the application.
-
-## 🎨 Theme Customization
-
-The application supports both dark and light themes. The theme can be toggled using the theme switch in the navigation bar. The theme preference is saved in localStorage and persists across sessions.
+The application uses the SheCodes AI API. Ensure your API key is correctly configured in the application's JavaScript files where API calls are made.
 
 ## 📱 Responsive Design
 
-The application is fully responsive and works on:
-- Desktop computers
-- Tablets
-- Mobile phones
-- Different screen sizes and orientations
-
-## 🔒 Data Privacy
-
-All recipe data is stored locally in your browser using localStorage. No data is sent to external servers except for the recipe generation API calls.
+The application is designed to be responsive and provide a good user experience on various devices.

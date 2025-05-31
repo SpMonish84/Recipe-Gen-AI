@@ -1,3 +1,4 @@
+console.log('Recipes.js script started.'); // Log script start
 class Recipes {
     constructor() {
         // Initialize recipes from localStorage or use mock data if none exists
@@ -50,6 +51,8 @@ class Recipes {
         this.recipeToDelete = null;
         this.initEventListeners();
         this.render();
+        this.renderPantryModal(); // Render the pantry selection modal
+        this.initPantryModalEventListener(); // Initialize pantry modal event listeners
     }
 
     generateUniqueId() {
@@ -57,6 +60,7 @@ class Recipes {
     }
 
     initEventListeners() {
+        console.log('Initializing Recipes component event listeners.'); // Log initialization
         // Set up event listeners for search
         const searchInput = document.getElementById('recipe-search');
         if(searchInput) {
@@ -127,6 +131,15 @@ class Recipes {
 
          // Event delegation for recipe card buttons
          this.attachRecipeCardEventListeners();
+
+         // Event listener for Generate from Pantry button
+         const generateFromPantryBtn = document.getElementById('generate-from-pantry-btn');
+         if (generateFromPantryBtn) {
+             console.log('Attaching click listener to Generate from Pantry button.'); // Log attaching listener
+             generateFromPantryBtn.addEventListener('click', () => {
+                 this.handleGenerateFromPantry();
+             });
+         }
     }
 
     saveRecipesToLocalStorage() {
@@ -265,14 +278,42 @@ class Recipes {
     }
 
      // Assuming showNotification and setLoading are available globally or passed in constructor
-     showNotification(message, type) {
-        // Placeholder for global showNotification function
-         if (typeof window.showNotification === 'function') {
-             window.showNotification(message, type);
-         } else {
-             console.warn('showNotification function not found', message);
-         }
-     }
+     showNotification(message, type = 'info') {
+        const notificationContainer = document.getElementById('notification-container');
+        if (!notificationContainer) return;
+
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.classList.add('notification-slide-in');
+        notification.innerHTML = `
+            <div class="notification-content">
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'warning' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                <span>${message}</span>
+            </div>
+            <button class="notification-close">&times;</button>
+        `;
+
+        notificationContainer.appendChild(notification);
+
+        // Add close button functionality
+        const closeButton = notification.querySelector('.notification-close');
+        closeButton.addEventListener('click', () => {
+            notification.classList.add('notification-slide-out');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        });
+
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.classList.add('notification-slide-out');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }
+        }, 5000);
+    }
 
      setLoading(isLoading) {
          // Placeholder for global setLoading function if needed for async operations
@@ -286,6 +327,7 @@ class Recipes {
     createRecipeCard(recipe) {
         // Ensure recipe has ingredients and instructions, provide defaults if not
         const ingredients = recipe.ingredients && Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+        const description = recipe.description || 'A delicious recipe created with your selected ingredients.';
 
         return `
             <div class="recipe-card">
@@ -293,11 +335,14 @@ class Recipes {
                     <h3>${recipe.name || 'Unnamed Recipe'}</h3>
                 </div>
                 <div class="recipe-card-body">
+                    <p class="recipe-description">${description}</p>
                     <h4>Ingredients Preview:</h4>
                     <ul>
                         ${ingredients.slice(0, 3).map(ing => `<li>${ing}</li>`).join('')}
                         ${ingredients.length > 3 ? `<li>... and ${ingredients.length - 3} more</li>` : ''}
                     </ul>
+                    <h4>Instructions Preview:</h4>
+                    <p class="recipe-instructions-preview">${recipe.instructions.split('\n')[0]}...</p>
                 </div>
                 <div class="recipe-card-footer">
                     <div class="footer-actions">
@@ -377,6 +422,238 @@ class Recipes {
              // Ensure no old listeners are active if grid is empty
             this.attachRecipeCardEventListeners(); // Re-attaching to an empty grid is safe
         }
+    }
+
+    renderPantryModal() {
+       // Create the modal element if it doesn't exist
+       if (!document.getElementById('pantry-selection-modal')) {
+            const modal = document.createElement('div');
+            modal.id = 'pantry-selection-modal';
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Select Ingredients from Pantry</h2>
+                        <button class="close-modal" data-modal-id="pantry-selection-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                       <div id="pantry-ingredients-list"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary close-modal" data-modal-id="pantry-selection-modal">Cancel</button>
+                        <button class="btn btn-primary" id="generate-recipe-from-pantry-btn">Generate Recipe</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+       }
+    }
+
+    handleGenerateFromPantry() {
+        console.log('Generate from Pantry button clicked.'); // Log button click
+        // Get ingredients from localStorage using the correct key
+        const storedIngredients = localStorage.getItem('pantryIngredients');
+        const ingredients = storedIngredients ? JSON.parse(storedIngredients) : [];
+
+        console.log('Fetched ingredients from localStorage:', ingredients); // Log fetched ingredients
+        const ingredientsListEl = document.getElementById('pantry-ingredients-list');
+        if (!ingredientsListEl) {
+            console.error('Pantry ingredients list element not found!'); // Log if element is missing
+            return;
+        }
+
+        if (ingredients.length === 0) {
+            ingredientsListEl.innerHTML = `
+                <div class="empty-message">
+                    <p>No ingredients found in your pantry.</p>
+                    <p>Please add some ingredients to your pantry first.</p>
+                </div>
+            `;
+        } else {
+            // Group ingredients by category
+            const ingredientsByCategory = ingredients.reduce((acc, ingredient) => {
+                const category = ingredient.category || 'Other';
+                if (!acc[category]) {
+                    acc[category] = [];
+                }
+                acc[category].push(ingredient);
+                return acc;
+            }, {});
+
+            // Render ingredients by category
+            ingredientsListEl.innerHTML = Object.entries(ingredientsByCategory).map(([category, items]) => `
+                <div class="pantry-category-section">
+                    <h4>${category}</h4>
+                    <div class="pantry-ingredients-grid">
+                        ${items.map(ingredient => `
+                            <div class="pantry-ingredient-item">
+                                <input type="checkbox" id="ingredient-${ingredient._id}" value="${ingredient.name}">
+                                <label for="ingredient-${ingredient._id}">
+                                    <span class="ingredient-name">${ingredient.name}</span>
+                                    <span class="ingredient-details">${ingredient.quantity} ${ingredient.unit}</span>
+                                </label>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Show the modal
+        const modal = document.getElementById('pantry-selection-modal');
+        if (modal) {
+            console.log('Showing pantry selection modal.'); // Log before showing modal
+            modal.style.display = 'block';
+        }
+        else {
+            console.error('Pantry selection modal element not found!'); // Log if modal is missing
+        }
+    }
+
+    initPantryModalEventListener() {
+        console.log('Initializing pantry modal event listeners.'); // Log initialization
+        // Use event delegation for the generate button
+        document.addEventListener('click', (event) => {
+            if (event.target && event.target.id === 'generate-recipe-from-pantry-btn') {
+                console.log('Generate Recipe button clicked');
+                this.handleGenerateRecipeFromSelected();
+            }
+        });
+        
+        // Also attach listener to close buttons for the modal
+        document.querySelectorAll('#pantry-selection-modal .close-modal').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const modal = document.getElementById('pantry-selection-modal');
+                if (modal) modal.style.display = 'none';
+                console.log('Pantry selection modal closed.'); // Log modal close
+            });
+        });
+    }
+
+    handleGenerateRecipeFromSelected() {
+        console.log('Generate Recipe button in modal clicked.'); // Log button click
+        // Get selected ingredients from the modal
+        const selectedIngredients = [];
+        const checkboxes = document.querySelectorAll('#pantry-ingredients-list input[type="checkbox"]:checked');
+        checkboxes.forEach(checkbox => {
+            selectedIngredients.push(checkbox.value);
+        });
+
+        console.log('Selected ingredients:', selectedIngredients); // Log selected ingredients
+        if (selectedIngredients.length === 0) {
+            this.showNotification('Please select at least one ingredient.', 'warning');
+            console.warn('No ingredients selected.'); // Log warning if no ingredients selected
+            return;
+        }
+
+        // Format ingredients for the API prompt
+        const ingredientsString = selectedIngredients.join(', ');
+        const prompt = `Create a detailed recipe using these ingredients: ${ingredientsString}. Include:
+        1. A creative name for the recipe
+        2. A brief description
+        3. A complete list of ingredients with quantities
+        4. Step-by-step cooking instructions
+        Make it easy to follow and delicious!`;
+
+        this.setLoading(true); // Show loading indicator
+        console.log('Calling SheCodes AI API with prompt:', prompt); // Log API prompt
+        const apiKey = "16t1b3fa04b8866116ccceb0d2do3a04"; // SheCodes API Key
+        const context = "You are a professional chef and recipe expert. Format the recipe in HTML with clear sections for name, description, ingredients, and step-by-step instructions. Make the instructions detailed and easy to follow. Sign the recipe at the end with '<strong>SheCodes AI</strong>' in bold";
+        const apiUrl = `https://api.shecodes.io/ai/v1/generate?prompt=${encodeURIComponent(prompt)}&context=${encodeURIComponent(context)}&key=${apiKey}`;
+
+        axios.get(apiUrl)
+            .then(response => {
+                this.setLoading(false); // Hide loading indicator
+                console.log('API Response:', response.data); // Log API response
+                const generatedHtml = response.data.answer; // Assuming the recipe is in response.data.answer
+                console.log('Parsing and saving recipe.'); // Log before parsing
+                this.parseAndSaveRecipe(generatedHtml);
+                // Show success notification with more details
+                this.showNotification('Recipe Generated', 'success');
+                
+                // Close the modal
+                const modal = document.getElementById('pantry-selection-modal');
+                if (modal) {
+                    modal.style.display = 'none';
+                }
+                // Scroll to the new recipe
+                const newRecipeCard = document.querySelector(`[data-recipe-id="${this.recipes[this.recipes.length - 1]._id}"]`);
+                if (newRecipeCard) {
+                    newRecipeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            })
+            .catch(error => {
+                this.setLoading(false); // Hide loading indicator on error
+                console.error('API Error:', error);
+                this.showNotification('Failed to generate recipe. Please try again.', 'warning');
+            });
+    }
+
+    parseAndSaveRecipe(htmlContent) {
+        console.log('Attempting to parse HTML content:', htmlContent); // Log the HTML content being parsed
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlContent;
+
+        // Extract details based on the expected HTML structure
+        const nameElement = tempDiv.querySelector('h1, h2'); // Look for either h1 or h2 for recipe name
+        const ingredientsList = tempDiv.querySelector('ul');
+        const instructionsElement = tempDiv.querySelector('ol') || tempDiv.querySelector('p'); // Prefer ordered list for instructions
+
+        const name = nameElement ? nameElement.textContent.trim() : 'Unnamed Recipe';
+        // Try to find description - it's usually in a paragraph after the title
+        const descriptionElement = nameElement ? nameElement.nextElementSibling : null;
+        const description = descriptionElement && descriptionElement.tagName === 'P' ? 
+            descriptionElement.textContent.trim() : 
+            'A delicious recipe created with your selected ingredients.';
+
+        const ingredients = [];
+        let instructions = '';
+
+        if (ingredientsList) {
+            ingredientsList.querySelectorAll('li').forEach(li => {
+                ingredients.push(li.textContent.trim());
+            });
+        }
+
+        if (instructionsElement) {
+            if (instructionsElement.tagName === 'OL') {
+                const instructionSteps = [];
+                instructionsElement.querySelectorAll('li').forEach(li => {
+                    instructionSteps.push(li.textContent.trim());
+                });
+                instructions = instructionSteps.map((step, index) => `${index + 1}. ${step}`).join('\n'); // Number the steps
+            } else {
+                instructions = instructionsElement.textContent.trim();
+            }
+        }
+
+        console.log('Parsed details - Name:', name, 'Ingredients:', ingredients, 'Instructions:', instructions); // Log parsed details
+        
+        // Basic validation
+        if (!name || ingredients.length === 0 || !instructions) {
+            console.error('Failed to parse recipe details from API response.', { name, ingredients, instructions });
+            this.showNotification('Could not parse generated recipe. It might not be in the expected format.', 'error');
+            return;
+        }
+
+        const newRecipe = {
+            _id: this.generateUniqueId(),
+            name: name,
+            description: description,
+            ingredients: ingredients,
+            instructions: instructions,
+            is_fav: false // New recipes are not favorited by default
+        };
+
+        console.log('New recipe object:', newRecipe); // Log the new recipe object
+        
+        // Add the new recipe to the list and save
+        console.log('Adding new recipe to recipes list.'); // Log before adding to list
+        this.recipes.push(newRecipe);
+        console.log('Saving recipes to localStorage.'); // Log before saving
+        this.saveRecipesToLocalStorage();
+        console.log('Re-rendering recipes grid.'); // Log before rendering
+        this.render(); // Re-render the recipes grid
     }
 }
 

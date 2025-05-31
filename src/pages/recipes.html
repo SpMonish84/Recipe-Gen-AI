@@ -19,17 +19,24 @@
                 <a href="home.html" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
                 <a href="recipes.html" class="nav-link active"><i class="fas fa-utensils"></i><span>Recipes</span></a>
                 <a href="favorites.html" class="nav-link"><i class="fas fa-heart"></i><span>Favorites</span></a>
-                <a href="ingredients.html" class="nav-link"><i class="fas fa-carrot"></i><span>Ingredients</span></a>
+                <a href="pantry.html" class="nav-link"><i class="fas fa-carrot"></i><span>Pantry</span></a>
                 <a href="upload.html" class="nav-link"><i class="fas fa-upload"></i><span>Upload</span></a>
             </div>
         </nav>
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Notification Container -->
+            <div id="notification-container" class="notification-container"></div>
             <div class="container">
                 <header>
                     <h1>Recipes</h1>
                     <p class="subtitle">Browse and manage your recipe collection</p>
-                    <button class="btn btn-primary" id="create-recipe-btn">Create New Recipe</button>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="create-recipe-btn">Create New Recipe</button>
+                        <button id="generate-from-pantry-btn" class="btn btn-primary">
+                            <i class="fas fa-magic"></i> Generate from Pantry
+                        </button>
+                    </div>
                 </header>
                 <div class="recipes-container">
                     <div class="search-bar">
@@ -109,6 +116,8 @@
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="../components/Recipes.js"></script>
 </body>
 </html> 
