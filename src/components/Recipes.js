@@ -1,58 +1,54 @@
 console.log('Recipes.js script started.'); // Log script start
 class Recipes {
     constructor() {
-        // Initialize recipes from localStorage or use mock data if none exists
-        const storedRecipes = localStorage.getItem('allRecipes');
-        if (storedRecipes) {
-            // Ensure mock data has is_fav property if not present and recipes have _id
-            this.recipes = JSON.parse(storedRecipes).map(recipe => ({
-                _id: recipe._id || this.generateUniqueId(), // Ensure unique _id
-                name: recipe.name,
-                description: recipe.description,
-                ingredients: Array.isArray(recipe.ingredients) ? recipe.ingredients : [],
-                instructions: recipe.instructions,
-                is_fav: recipe.is_fav !== undefined ? recipe.is_fav : false
-            }));
-        } else {
-            // Mock data for development with unique _id and is_fav property
-            this.recipes = [
-                {
-                    _id: this.generateUniqueId(),
-                    name: 'Masala-Spiced Banana & Coriander Pizza',
-                    description: 'An unusual but surprisingly delicious pizza.',
-                    ingredients: ['1 Modern Medium Crust Pizza Base', '2 Bananas, sliced', '100g Coriander leaves, chopped', 'Masala spice blend', 'Cheese', 'Tomato base', 'Red onion', 'Chilli flakes'],
-                    instructions: '1. Spread tomato base on pizza base.\n2. Sprinkle with cheese and masala spice.\n3. Arrange banana slices and chopped coriander.\n4. Add sliced red onion and chilli flakes.\n5. Bake in a hot oven until crust is golden and cheese is melted.',
-                    is_fav: true
-                },
-                {
-                    _id: this.generateUniqueId(),
-                    name: 'Vegetable Stir Fry',
-                    description: 'Quick and healthy vegetable stir fry with rice.',
-                    ingredients: ['rice', 'broccoli', 'carrots', 'bell peppers', 'soy sauce', 'ginger', 'garlic', 'sesame oil'],
-                    instructions: '1. Cook rice according to package instructions.\n2. Heat sesame oil in a wok or large pan.\n3. Add chopped ginger and garlic, stir-fry for 30 seconds.\n4. Add vegetables and stir-fry until tender-crisp.\n5. Pour in soy sauce and stir to combine.\n6. Serve over rice.',
-                    is_fav: false
-                },
-                 {
-                    _id: this.generateUniqueId(),
-                    name: 'Simple Pasta with Tomato Sauce',
-                    description: 'A quick and easy weeknight pasta dish.',
-                    ingredients: ['pasta', 'canned crushed tomatoes', 'onion', 'garlic', 'olive oil', 'dried oregano', 'salt', 'pepper'],
-                    instructions: '1. Cook pasta according to package directions.\n2. While pasta cooks, heat olive oil in a pan.\n3. Sauté chopped onion and garlic until softened.\n4. Add crushed tomatoes, oregano, salt, and pepper.\n5. Simmer sauce for 15-20 minutes.\n6. Drain pasta and add to the sauce. Toss to coat.\n7. Serve hot.',
-                    is_fav: true
-                }
-            ];
-             // Save initial mock data to localStorage if not already present
-             localStorage.setItem('allRecipes', JSON.stringify(this.recipes));
-        }
-
-
+        // Initialize recipes from user data
+        this.recipes = [];
         this.searchText = '';
         this.selectedRecipe = null;
         this.recipeToDelete = null;
+        this.API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
         this.initEventListeners();
+        this.loadUserRecipes();
         this.render();
-        this.renderPantryModal(); // Render the pantry selection modal
-        this.initPantryModalEventListener(); // Initialize pantry modal event listeners
+        this.renderPantryModal();
+        this.initPantryModalEventListener();
+    }
+
+    async loadUserRecipes() {
+        console.log('Attempting to load user recipes from backend.'); // Log start of fetch
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${this.API_URL}/users/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            // Check if the response is OK (status code 200-299)
+            if (!response.ok) {
+                const errorText = await response.text(); // Read response as text to see the error HTML
+                console.error('API response not OK:', response.status, response.statusText, errorText);
+                 // Attempt to parse JSON even if not OK, as some APIs might return error JSON
+                let errorData = null;
+                try {
+                    errorData = JSON.parse(errorText);
+                } catch (e) {
+                    // If parsing fails, the response is likely HTML
+                    console.error('Response is not valid JSON, likely HTML error page.');
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const userData = await response.json();
+            console.log('User data fetched successfully:', userData); // Log fetched user data
+            this.recipes = userData.recipes || [];
+            console.log('Recipes updated in local state:', this.recipes); // Log recipes array after update
+            this.render();
+        } catch (error) {
+            console.error('Error loading user recipes:', error);
+            this.recipes = [];
+            this.render();
+        }
     }
 
     generateUniqueId() {
@@ -188,10 +184,18 @@ class Recipes {
     }
 
     handleToggleFavorite(recipeToToggle) {
+        // Determine the action (add or remove) based on the current favorite status
+        const isCurrentlyFavorite = this.recipes.find(recipe => recipe._id === recipeToToggle._id)?.is_fav;
+        const method = isCurrentlyFavorite ? 'DELETE' : 'POST'; // Although the backend uses PUT, we can conceptually think of it as add/remove
+        const endpoint = `${this.API_URL}/users/favorites`;
+        const recipeId = recipeToToggle._id;
+
+        const token = localStorage.getItem('token');
+
+        // Optimistically update the UI
         this.recipes = this.recipes.map(recipe => 
-            recipe._id === recipeToToggle._id ? { ...recipe, is_fav: !recipe.is_fav } : recipe
+            recipe._id === recipeToToggle._id ? { ...recipe, is_fav: !isCurrentlyFavorite } : recipe
         );
-        this.saveRecipesToLocalStorage();
         this.render();
 
         // Update modal if open and it's the same recipe
@@ -199,7 +203,7 @@ class Recipes {
          if (recipeModal && this.selectedRecipe && this.selectedRecipe._id === recipeToToggle._id) {
             const favoriteBtn = document.getElementById('modal-favorite-btn');
             if(favoriteBtn) {
-                 favoriteBtn.innerHTML = `<i class="fas fa-heart${!recipeToToggle.is_fav ? '-o' : ''}"></i>`; // Note the logic reversal here
+                 favoriteBtn.innerHTML = `<i class="fas fa-heart${!isCurrentlyFavorite ? '' : '-o'}"></i>`;
                   // Re-attach event listener to the updated button
                 const newFavoriteBtn = favoriteBtn.cloneNode(true);
                 favoriteBtn.parentNode.replaceChild(newFavoriteBtn, favoriteBtn);
@@ -207,7 +211,45 @@ class Recipes {
             }
         }
 
-        this.showNotification(`Recipe ${!recipeToToggle.is_fav ? 'removed from' : 'added to'} favorites`, 'success');
+        // Send the request to the backend
+        fetch(endpoint, {
+            method: 'PUT', // Use PUT as defined in the backend route
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ recipeId })
+        })
+        .then(async response => {
+            if (!response.ok) {
+                // Revert optimistic UI update on error
+                this.recipes = this.recipes.map(recipe => 
+                    recipe._id === recipeToToggle._id ? { ...recipe, is_fav: isCurrentlyFavorite } : recipe
+                );
+                this.render();
+                const errorText = await response.text();
+                console.error('Error updating favorites on backend:', response.status, response.statusText, errorText);
+                this.showNotification(`Failed to ${isCurrentlyFavorite ? 'remove from' : 'add to'} favorites.`, 'error');
+                return;
+            }
+            const result = await response.json();
+            console.log('Backend response for favorite update:', result);
+            // Show success notification based on backend response message
+            this.showNotification(result.msg, 'success');
+             
+            // Re-fetch user recipes to ensure local state is in sync with backend after favorite update
+            this.loadUserRecipes();
+
+        })
+        .catch(error => {
+            // Revert optimistic UI update on network error
+             this.recipes = this.recipes.map(recipe => 
+                 recipe._id === recipeToToggle._id ? { ...recipe, is_fav: isCurrentlyFavorite } : recipe
+             );
+             this.render();
+            console.error('Network error updating favorites:', error);
+            this.showNotification('An error occurred while updating favorites.', 'error');
+        });
     }
 
     handleEditRecipe(recipe) {
@@ -248,33 +290,111 @@ class Recipes {
         const form = document.getElementById('create-recipe-form');
         if (!form) return;
 
-        const nameInput = document.getElementById('recipe-name');
+        const titleInput = document.getElementById('recipe-name');
         const descriptionInput = document.getElementById('recipe-description');
         const ingredientsInput = document.getElementById('ingredients');
         const instructionsInput = document.getElementById('instructions');
+        const cookingTimeInput = document.getElementById('cooking-time');
+        const difficultyInput = document.getElementById('difficulty');
+        const servingsInput = document.getElementById('servings');
+        const categoryInput = document.getElementById('category');
 
-        const newRecipe = {
-            _id: this.generateUniqueId(),
-            name: nameInput.value.trim() || 'Unnamed Recipe',
-            description: descriptionInput.value.trim(),
-            ingredients: ingredientsInput.value.split('\n').map(item => item.trim()).filter(item => item !== ''),
-            instructions: instructionsInput.value.trim(),
-            is_fav: false // New recipes are not favorited by default
-        };
+        // Parse ingredients into the required format
+        const ingredients = ingredientsInput.value.split('\n')
+            .map(item => item.trim())
+            .filter(item => item !== '')
+            .map(item => {
+                // Split by comma and ensure we have all three parts
+                const parts = item.split(',').map(part => part.trim());
+                if (parts.length !== 3) {
+                    throw new Error(`Invalid ingredient format: ${item}. Please use format: name, quantity, unit`);
+                }
+                const [name, quantity, unit] = parts;
+                if (!name || !quantity || !unit) {
+                    throw new Error(`Missing required fields for ingredient: ${item}. Please provide name, quantity, and unit.`);
+                }
+                const parsedQuantity = parseFloat(quantity);
+                if (isNaN(parsedQuantity) || parsedQuantity < 0) {
+                    throw new Error(`Invalid quantity for ingredient: ${item}. Please provide a valid number.`);
+                }
+                return {
+                    name: name,
+                    quantity: parsedQuantity,
+                    unit: unit
+                };
+            });
 
-        if (!newRecipe.name || !newRecipe.ingredients.length || !newRecipe.instructions) {
-            this.showNotification('Please fill out all required fields (Name, Ingredients, Instructions)', 'error');
-            return;
+        try {
+            const newRecipe = {
+                title: titleInput.value.trim(),
+                description: descriptionInput.value.trim(),
+                ingredients: ingredients,
+                instructions: instructionsInput.value.split('\n').map(step => step.trim()).filter(step => step !== ''),
+                cookingTime: parseInt(cookingTimeInput.value) || 0,
+                difficulty: difficultyInput.value,
+                servings: parseInt(servingsInput.value) || 0,
+                category: categoryInput.value
+            };
+
+            // Validate required fields
+            if (!newRecipe.title || !newRecipe.description || !newRecipe.ingredients.length || 
+                !newRecipe.instructions.length || !newRecipe.cookingTime || !newRecipe.difficulty || 
+                !newRecipe.servings || !newRecipe.category) {
+                this.showNotification('Please fill out all required fields', 'error');
+                return;
+            }
+
+            // Validate description length
+            if (newRecipe.description.length < 10) {
+                this.showNotification('Description must be at least 10 characters long', 'error');
+                return;
+            }
+
+            // Save the new recipe to the backend
+            this.setLoading(true);
+            const token = localStorage.getItem('token');
+
+            console.log('Sending new recipe to backend:', newRecipe); // Add this line
+
+            fetch(`${this.API_URL}/recipes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(newRecipe)
+            })
+            .then(async response => {
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error saving manually created recipe to backend:', response.status, response.statusText, errorText);
+                    this.showNotification(`Failed to save recipe: ${response.statusText}`, 'error');
+                    return;
+                }
+                const savedRecipe = await response.json();
+                console.log('Manually created recipe saved to backend:', savedRecipe);
+
+                // Re-fetch user recipes to ensure local state is in sync with backend
+                this.loadUserRecipes();
+
+                const createModal = document.getElementById('create-recipe-modal');
+                if(createModal) createModal.style.display = 'none';
+
+                this.showNotification('Recipe created successfully!', 'success');
+                form.reset();
+
+            })
+            .catch(error => {
+                console.error('Network error saving manually created recipe:', error);
+                this.showNotification('An error occurred while saving the recipe.', 'error');
+            })
+            .finally(() => {
+                this.setLoading(false);
+            });
+        } catch (error) {
+            this.showNotification(error.message, 'error');
+            console.error('Error processing recipe:', error);
         }
-
-        this.recipes.push(newRecipe);
-        this.saveRecipesToLocalStorage();
-        this.render();
-
-        const createModal = document.getElementById('create-recipe-modal');
-        if(createModal) createModal.style.display = 'none';
-
-        this.showNotification('Recipe created successfully!', 'success');
     }
 
      // Assuming showNotification and setLoading are available globally or passed in constructor
@@ -346,12 +466,14 @@ class Recipes {
                 </div>
                 <div class="recipe-card-footer">
                     <div class="footer-actions">
-                        <button class="btn btn-danger" data-recipe-id="${recipe._id}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="favorite-btn" data-recipe-id="${recipe._id}">
-                            <i class="fas fa-heart${recipe.is_fav ? '' : '-o'}"></i>
-                        </button>
+                        <div class="icon-actions">
+                            <button class="btn btn-danger" data-recipe-id="${recipe._id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <button class="favorite-btn" data-recipe-id="${recipe._id}">
+                                <i class="fas fa-heart${recipe.is_fav ? '' : '-o'}"></i>
+                            </button>
+                        </div>
                         <button class="btn btn-primary" data-recipe-id="${recipe._id}">
                             VIEW FULL RECIPE
                         </button>
@@ -396,6 +518,7 @@ class Recipes {
      }
 
     render() {
+        console.log('Rendering recipes grid with data:', this.recipes); // Log data being rendered
         const filteredRecipes = this.recipes.filter(recipe =>
             recipe.name.toLowerCase().includes(this.searchText.toLowerCase()) ||
             (Array.isArray(recipe.ingredients) && recipe.ingredients.some(ing => ing.toLowerCase().includes(this.searchText.toLowerCase())))
@@ -451,27 +574,27 @@ class Recipes {
 
     handleGenerateFromPantry() {
         console.log('Generate from Pantry button clicked.'); // Log button click
-        // Get ingredients from localStorage using the correct key
-        const storedIngredients = localStorage.getItem('pantryIngredients');
-        const ingredients = storedIngredients ? JSON.parse(storedIngredients) : [];
+        const pantryModal = document.getElementById('pantry-selection-modal');
+        const pantryIngredientsListEl = pantryModal ? pantryModal.querySelector('#pantry-ingredients-list') : null;
 
-        console.log('Fetched ingredients from localStorage:', ingredients); // Log fetched ingredients
-        const ingredientsListEl = document.getElementById('pantry-ingredients-list');
-        if (!ingredientsListEl) {
-            console.error('Pantry ingredients list element not found!'); // Log if element is missing
+        if (!pantryModal || !pantryIngredientsListEl) {
+            console.error('Pantry selection modal or ingredients list element not found.');
+            this.showNotification('Error opening pantry selection.', 'error');
             return;
         }
 
-        if (ingredients.length === 0) {
-            ingredientsListEl.innerHTML = `
-                <div class="empty-message">
-                    <p>No ingredients found in your pantry.</p>
-                    <p>Please add some ingredients to your pantry first.</p>
-                </div>
-            `;
+        // Clear previous items
+        pantryIngredientsListEl.innerHTML = '';
+
+        // Get pantry ingredients from localStorage (assuming Pantry component saves them here)
+        const storedIngredients = localStorage.getItem('pantryIngredients');
+        const pantryIngredients = storedIngredients ? JSON.parse(storedIngredients) : [];
+
+        if (pantryIngredients.length === 0) {
+            pantryIngredientsListEl.innerHTML = '<p class="empty-message">Your pantry is empty. Add items in the Pantry page first.</p>';
         } else {
-            // Group ingredients by category
-            const ingredientsByCategory = ingredients.reduce((acc, ingredient) => {
+            // Group ingredients by category (optional, but good for organization)
+            const ingredientsByCategory = pantryIngredients.reduce((acc, ingredient) => {
                 const category = ingredient.category || 'Other';
                 if (!acc[category]) {
                     acc[category] = [];
@@ -480,34 +603,32 @@ class Recipes {
                 return acc;
             }, {});
 
-            // Render ingredients by category
-            ingredientsListEl.innerHTML = Object.entries(ingredientsByCategory).map(([category, items]) => `
-                <div class="pantry-category-section">
-                    <h4>${category}</h4>
-                    <div class="pantry-ingredients-grid">
-                        ${items.map(ingredient => `
-                            <div class="pantry-ingredient-item">
-                                <input type="checkbox" id="ingredient-${ingredient._id}" value="${ingredient.name}">
-                                <label for="ingredient-${ingredient._id}">
-                                    <span class="ingredient-name">${ingredient.name}</span>
-                                    <span class="ingredient-details">${ingredient.quantity} ${ingredient.unit}</span>
-                                </label>
-                            </div>
-                        `).join('')}
+            // Render grouped ingredients
+            const sortedCategories = Object.keys(ingredientsByCategory).sort(); // Sort categories alphabetically
+
+            sortedCategories.forEach(category => {
+                const categoryHtml = `
+                    <div class="pantry-category-section">
+                        <h4>${category}</h4>
+                        <div class="pantry-ingredients-grid">
+                            ${ingredientsByCategory[category].map(ingredient => `
+                                <div class="pantry-ingredient-item">
+                                    <input type="checkbox" id="pantry-item-${ingredient._id}" value="${ingredient.name}" data-id="${ingredient._id}">
+                                    <label for="pantry-item-${ingredient._id}">
+                                        <span class="ingredient-name">${ingredient.name}</span>
+                                        <span class="ingredient-details">${ingredient.quantity} ${ingredient.unit || ''}</span>
+                                    </label>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+                pantryIngredientsListEl.innerHTML += categoryHtml;
+            });
         }
 
         // Show the modal
-        const modal = document.getElementById('pantry-selection-modal');
-        if (modal) {
-            console.log('Showing pantry selection modal.'); // Log before showing modal
-            modal.style.display = 'block';
-        }
-        else {
-            console.error('Pantry selection modal element not found!'); // Log if modal is missing
-        }
+        pantryModal.style.display = 'block';
     }
 
     initPantryModalEventListener() {
@@ -562,25 +683,12 @@ class Recipes {
         const apiUrl = `https://api.shecodes.io/ai/v1/generate?prompt=${encodeURIComponent(prompt)}&context=${encodeURIComponent(context)}&key=${apiKey}`;
 
         axios.get(apiUrl)
-            .then(response => {
+            .then(async response => {
                 this.setLoading(false); // Hide loading indicator
                 console.log('API Response:', response.data); // Log API response
                 const generatedHtml = response.data.answer; // Assuming the recipe is in response.data.answer
                 console.log('Parsing and saving recipe.'); // Log before parsing
-                this.parseAndSaveRecipe(generatedHtml);
-                // Show success notification with more details
-                this.showNotification('Recipe Generated', 'success');
-                
-                // Close the modal
-                const modal = document.getElementById('pantry-selection-modal');
-                if (modal) {
-                    modal.style.display = 'none';
-                }
-                // Scroll to the new recipe
-                const newRecipeCard = document.querySelector(`[data-recipe-id="${this.recipes[this.recipes.length - 1]._id}"]`);
-                if (newRecipeCard) {
-                    newRecipeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
+                await this.parseAndSaveRecipe(generatedHtml);
             })
             .catch(error => {
                 this.setLoading(false); // Hide loading indicator on error
@@ -589,7 +697,7 @@ class Recipes {
             });
     }
 
-    parseAndSaveRecipe(htmlContent) {
+    async parseAndSaveRecipe(htmlContent) {
         console.log('Attempting to parse HTML content:', htmlContent); // Log the HTML content being parsed
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = htmlContent;
@@ -637,23 +745,72 @@ class Recipes {
         }
 
         const newRecipe = {
-            _id: this.generateUniqueId(),
             name: name,
             description: description,
             ingredients: ingredients,
             instructions: instructions,
-            is_fav: false // New recipes are not favorited by default
         };
 
-        console.log('New recipe object:', newRecipe); // Log the new recipe object
+        console.log('New recipe object to save to backend:', newRecipe); // Log the new recipe object
         
-        // Add the new recipe to the list and save
-        console.log('Adding new recipe to recipes list.'); // Log before adding to list
-        this.recipes.push(newRecipe);
-        console.log('Saving recipes to localStorage.'); // Log before saving
-        this.saveRecipesToLocalStorage();
-        console.log('Re-rendering recipes grid.'); // Log before rendering
-        this.render(); // Re-render the recipes grid
+        // Save the new recipe to the backend
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${this.API_URL}/recipes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(newRecipe)
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Error saving recipe to backend:', response.status, response.statusText, errorText);
+                this.showNotification(`Failed to save recipe: ${response.statusText}`, 'error');
+                this.setLoading(false); // Hide loading on error
+                return;
+            }
+
+            const savedRecipe = await response.json();
+            console.log('Recipe saved to backend:', savedRecipe); // Log saved recipe from backend
+
+            // Re-fetch user recipes to ensure local state is in sync with backend after saving
+            console.log('Re-fetching all user recipes after saving.'); // Log before re-fetching
+            this.loadUserRecipes();
+
+            // No longer saving to local storage for the main recipe list
+            // this.saveRecipesToLocalStorage();
+
+            // The render call is handled by loadUserRecipes after fetching
+            // console.log('Re-rendering recipes grid after saving.'); // Log before rendering
+            // this.render(); // Re-render the recipes grid with the new recipe
+            
+            // Show success notification
+            this.showNotification('Recipe generated and saved successfully!', 'success');
+
+            // Close the modal and scroll to the new recipe
+             const modal = document.getElementById('pantry-selection-modal');
+             if (modal) { modal.style.display = 'none'; }
+
+             // Note: Scrolling to the new recipe is now less straightforward
+             // because loadUserRecipes fetches the whole list. We could potentially
+             // find the savedRecipe in the re-fetched list after loadUserRecipes completes.
+             // For now, the notification confirms saving.
+             // setTimeout(() => {
+             //     const newRecipeCard = document.querySelector(`[data-recipe-id="${savedRecipe._id}"]`);
+             //     if (newRecipeCard) {
+             //         newRecipeCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+             //     }
+             // }, 100);
+
+        } catch (error) {
+            console.error('Error saving recipe:', error);
+            this.showNotification('An error occurred while saving the recipe.', 'error');
+        } finally {
+             this.setLoading(false); // Ensure loading is hidden
+        }
     }
 }
 

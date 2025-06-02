@@ -1,14 +1,30 @@
 class FavoriteRecipes {
     constructor() {
-        // Load all recipes from localStorage, then filter for favorites
-        const allRecipes = JSON.parse(localStorage.getItem('allRecipes')) || [];
-        this.recipes = allRecipes.filter(recipe => recipe.is_fav);
-
+        this.recipes = [];
         this.searchText = '';
         this.selectedRecipe = null;
         this.recipeToDelete = null;
         this.initEventListeners();
+        this.loadUserFavorites();
         this.render();
+    }
+
+    async loadUserFavorites() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/users/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const userData = await response.json();
+            this.recipes = userData.favorites || [];
+            this.render();
+        } catch (error) {
+            console.error('Error loading user favorites:', error);
+            this.recipes = [];
+            this.render();
+        }
     }
 
     initEventListeners() {

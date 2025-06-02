@@ -4,17 +4,24 @@ class Dashboard {
     constructor() {
         this.stats = {
             totalRecipes: 0,
-            totalIngredients: 0,
             favoriteRecipes: 0,
+            totalIngredients: 0,
             vegetableCount: 0,
-            otherCount: 0
+            otherCount: 0,
+            categoryBreakdown: {}
         };
+        // DOM Elements
+        this.dashboardContainer = document.getElementById('dashboard-container');
+        this.statsContainer = document.getElementById('stats-container');
         
         this.expiringIngredients = [];
         this.suggestions = [];
         
-        this.initializeStats();
-        this.getRecipeSuggestions();
+        // Removed calls to initializeStats() and render() from constructor
+        // Data loading and initial rendering is now handled by loadAndRenderData()
+        // this.initializeStats(); 
+        this.getRecipeSuggestions(); // Keep fetching suggestions
+        // this.render(); 
     }
 
     initializeStats() {
@@ -71,55 +78,22 @@ class Dashboard {
     }
 
     async getRecipeSuggestions() {
+        // To avoid ReferenceError: process is not defined in the browser,
+        // we use hardcoded suggestions instead of accessing environment variables for an API call.
         try {
-            // Create a prompt for the AI to get random recipe suggestions
-            const prompt = `Suggest 3 unique and creative recipe names. 
-                Make them interesting and appetizing. 
-                Only return the recipe names, one per line. 
-                Do not include any ingredients or instructions.`;
-
-            // Call SheCodes AI API
-            const response = await axios.post('https://api.shecodes.io/ai/v1/chat/completions', {
-                model: "gpt-3.5-turbo",
-                messages: [{
-                    role: "user",
-                    content: prompt
-                }],
-                max_tokens: 100,
-                temperature: 0.9
-            }, {
-                headers: {
-                    'Authorization': `Bearer ${process.env.SHECODES_API_KEY}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            // Process the response to get exactly 3 recipe names
-            const recipeNames = response.data.choices[0].message.content
-                .split('\n')
-                .filter(name => name.trim())
-                .slice(0, 3);
-
-            // If no recipes were generated, use default suggestions
-            if (recipeNames.length === 0) {
-                this.suggestions = [
-                    { name: "Creamy Mushroom Risotto" },
-                    { name: "Spicy Thai Basil Chicken" },
-                    { name: "Mediterranean Grilled Salmon" }
-                ];
-            } else {
-                // Update suggestions with just the names
-                this.suggestions = recipeNames.map(name => ({
-                    name: name.trim()
-                }));
-            }
-
-            // Update the UI
+            // Use default suggestions as the API key cannot be accessed client-side
+            this.suggestions = [
+                { name: "Creamy Mushroom Risotto" },
+                { name: "Spicy Thai Basil Chicken" },
+                { name: "Mediterranean Grilled Salmon" }
+            ];
+            
+            // Update the UI with the suggestions
             this.updateSuggestionsUI();
 
         } catch (error) {
-            console.error('Error getting recipe suggestions:', error);
-            // Use default suggestions if API call fails
+            console.error('Error getting recipe suggestions (using fallback):', error);
+            // In case of any unexpected error, still provide default suggestions
             this.suggestions = [
                 { name: "Creamy Mushroom Risotto" },
                 { name: "Spicy Thai Basil Chicken" },
@@ -296,6 +270,144 @@ class Dashboard {
                 }
             }
         });
+    }
+
+    // Method to load and render dashboard data
+    async loadAndRenderData() {
+        try {
+            const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+            const token = localStorage.getItem('token');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            };
+
+            const response = await axios.get(`${API_URL}/users/profile`, { headers });
+            const user = response.data;
+
+            // Update stats
+            this.updateStats(user);
+
+            // Check if user has any data
+            const hasData = user.recipes?.length > 0 || user.favorites?.length > 0 || user.pantry?.length > 0;
+            
+            if (!hasData) {
+                 // Clear previous content if any and show empty state
+                 if (this.dashboardContainer) this.dashboardContainer.innerHTML = '';
+                handleEmptyState(this.dashboardContainer, [], 'dashboard');
+                return;
+            }
+
+            // Display recent activity
+            this.displayRecentActivity(user);
+
+        } catch (error) {
+            console.error('Error loading dashboard data:', error);
+            // Show empty state on error
+            if (this.dashboardContainer) this.dashboardContainer.innerHTML = '';
+            handleEmptyState(this.dashboardContainer, [], 'dashboard');
+        }
+    }
+
+    // Update Stats
+    updateStats(user) {
+        const stats = {
+            recipes: user.recipes?.length || 0,
+            favorites: user.favorites?.length || 0,
+            pantry: user.pantry?.length || 0
+        };
+
+        if (this.statsContainer) {
+            this.statsContainer.innerHTML = `
+                <div class="stat-card">
+                    <i class="fas fa-utensils"></i>
+                    <h3>${stats.recipes}</h3>
+                    <p>Recipes</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-heart"></i>
+                    <h3>${stats.favorites}</h3>
+                    <p>Favorites</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-carrot"></i>
+                    <h3>${stats.pantry}</h3>
+                    <p>Pantry Items</p>
+                </div>
+            `;
+        }
+    }
+
+    // Display Recent Activity
+    displayRecentActivity(user) {
+        if (!this.dashboardContainer) return;
+
+        const recentActivity = document.createElement('div');
+        recentActivity.className = 'recent-activity';
+        recentActivity.innerHTML = `
+            <h2>Recent Activity</h2>
+            <div class="activity-list">
+                ${this.getRecentActivityItems(user)}
+            </div>
+        `;
+
+        this.dashboardContainer.innerHTML = '';
+        this.dashboardContainer.appendChild(recentActivity);
+    }
+
+    // Get Recent Activity Items
+    getRecentActivityItems(user) {
+        const activities = [];
+
+        // Add recent recipes
+        if (user.recipes?.length > 0) {
+            const recentRecipes = user.recipes.slice(0, 3);
+            recentRecipes.forEach(recipe => {
+                activities.push(`
+                    <div class="activity-item">
+                        <i class="fas fa-utensils"></i>
+                        <div class="activity-content">
+                            <h4>${recipe.title}</h4>
+                            <p>Added to your recipes</p>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        // Add recent favorites
+        if (user.favorites?.length > 0) {
+            const recentFavorites = user.favorites.slice(0, 3);
+            recentFavorites.forEach(recipe => {
+                activities.push(`
+                    <div class="activity-item">
+                        <i class="fas fa-heart"></i>
+                        <div class="activity-content">
+                            <h4>${recipe.title}</h4>
+                            <p>Added to your favorites</p>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        // Add recent pantry items
+        if (user.pantry?.length > 0) {
+            const recentPantry = user.pantry.slice(0, 3);
+            recentPantry.forEach(item => {
+                activities.push(`
+                    <div class="activity-item">
+                        <i class="fas fa-carrot"></i>
+                        <div class="activity-content">
+                            <h4>${item.name}</h4>
+                            <p>Added to your pantry</p>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        return activities.join('') || '<p>No recent activity</p>';
     }
 }
 

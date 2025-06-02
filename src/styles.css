@@ -1,17 +1,17 @@
 :root {
-    --primary-color: #4a90e2;
-    --primary-light: #6ba7e8;
-    --primary-dark: #357abd;
-    --secondary-color: #f5f5f5;
-    --text-color: #2c3e50;
-    --text-light: #7f8c8d;
-    --error-color: #e74c3c;
-    --success-color: #2ecc71;
+    --primary-color: #007BFF;
+    --primary-light: #66b2ff;
+    --primary-dark: #0056b3;
+    --secondary-color: #e9ecef;
+    --text-color: #343a40;
+    --text-light: #6c757d;
+    --error-color: #dc3545;
+    --success-color: #28a745;
     --border-radius: 12px;
     --transition: all 0.3s ease;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.075);
+    --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-lg: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 }
 
 * {
@@ -24,7 +24,7 @@ body {
     font-family: 'Plus Jakarta Sans', sans-serif;
     line-height: 1.6;
     color: var(--text-color);
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background: linear-gradient(135deg, #e2eafc 0%, #c3cfe2 100%);
     min-height: 100vh;
 }
 
@@ -35,67 +35,78 @@ body {
 
 /* Navigation Styles */
 .main-nav {
-    width: 280px;
-    background: rgba(255, 255, 255, 0.95);
+    background: #ffffff;
     padding: 2rem;
-    box-shadow: var(--shadow);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px; /* Adjust width as needed */
+    z-index: 1000;
     display: flex;
     flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-    border-right: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .nav-brand h1 {
-    font-size: 1.75rem;
-    margin-bottom: 2.5rem;
-    color: var(--primary-color);
-    font-weight: 700;
-    letter-spacing: -0.5px;
+    margin: 0 0 2rem 0; /* Add margin below the brand */
+    font-size: 1.8rem;
+    color: #333;
+    text-align: center;
 }
 
 .nav-links {
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    flex-direction: column; /* Stack links vertically */
+    gap: 1rem;
+    align-items: flex-start; /* Align links to the left */
 }
 
 .nav-link {
     display: flex;
     align-items: center;
     gap: 1rem;
-    padding: 1rem 1.25rem;
-    border: none;
-    background: none;
-    color: var(--text-color);
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    border-radius: var(--border-radius);
-    transition: var(--transition);
+    color: #666;
+    text-decoration: none;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    width: 100%; /* Make links take full width */
 }
 
 .nav-link:hover {
-    background: var(--secondary-color);
-    transform: translateX(5px);
+    background: #f5f5f5;
+    color: #333;
 }
 
 .nav-link.active {
-    background: var(--primary-color);
+    background: #4CAF50;
     color: white;
-    box-shadow: var(--shadow-sm);
 }
 
 .nav-link i {
-    font-size: 1.25rem;
+    font-size: 1.4rem; /* Slightly larger icons */
 }
 
-/* Main Content Styles */
+.nav-link span {
+    font-size: 1.1rem; /* Slightly larger text */
+    font-weight: 500;
+}
+
+/* Remove underlines from all links */
+a {
+    text-decoration: none;
+}
+
+/* Ensure icons don't have underlines */
+.fas, .far, .fab {
+    text-decoration: none;
+}
+
+/* Adjust main content margin to accommodate vertical nav */
 .main-content {
     flex: 1;
-    margin-left: 280px;
+    margin-left: 250px; /* Same as nav width */
     padding: 2rem;
     background: #f8f9fa;
 }
@@ -718,6 +729,7 @@ body {
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
+    align-items: stretch;
 }
 
 .recipe-card {
@@ -732,6 +744,7 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
     border: 1px solid #e0e0e0;
+    min-height: 380px;
 }
 
 .recipe-card:hover {
@@ -754,17 +767,29 @@ body {
     color: var(--text-color);
     flex: 1;
     padding-right: 1rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
 }
 
 .recipe-card-body {
     flex-grow: 1;
     margin-bottom: 1rem;
+    min-height: 120px;
+    overflow: hidden;
 }
 
 .recipe-card-body p {
     margin: 0 0 1rem 0;
     color: #4b5563;
     line-height: 1.5;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 3;
+    text-overflow: ellipsis;
 }
 
 .recipe-card-body h4 {
@@ -785,19 +810,45 @@ body {
     font-size: 0.9em;
     color: #4b5563;
     line-height: 1.4;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 1;
+    text-overflow: ellipsis;
+}
+
+.recipe-card-body ul li:last-child {
+    border-bottom: none;
+}
+
+.recipe-card-body .recipe-instructions-preview {
+    margin-top: 1rem;
+    color: #4b5563;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
 }
 
 .recipe-card-footer {
-    margin-top: 1rem;
+    margin-top: auto;
     padding-top: 1rem;
     border-top: 1px solid #e5e7eb;
 }
 
 .footer-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     gap: 0.75rem;
+}
+
+.icon-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 .footer-actions button {
@@ -805,41 +856,57 @@ body {
     border-radius: 8px;
     font-size: 0.9rem;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    vertical-align: middle;
+    align-self: center;
 }
 
 .footer-actions .btn-primary {
     background-color: #2563eb;
     color: white;
     border: none;
-    padding: 0.6rem 1.2rem;
+    padding: 0.6rem 1rem;
     font-weight: 500;
+    flex-grow: 1;
+    text-align: center;
 }
 
 .footer-actions .btn-primary:hover {
     background-color: #1d4ed8;
 }
 
-.footer-actions .btn-danger {
+.footer-actions .btn-danger,
+.footer-actions .favorite-btn {
     background-color: transparent;
     color: #ef4444;
     border: none;
-    padding: 0.5rem;
+    padding: 0;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1;
+    flex-shrink: 0;
 }
 
 .footer-actions .btn-danger:hover {
     background-color: #fee2e2;
 }
 
-.footer-actions .favorite-btn {
-    background-color: transparent;
-    color: #ef4444;
-    border: none;
-    padding: 0.5rem;
-    cursor: pointer;
-}
-
 .footer-actions .favorite-btn:hover {
     background-color: #fee2e2;
+}
+
+/* Make icons bolder and perfectly centered */
+.footer-actions .btn-danger i,
+.footer-actions .favorite-btn i {
+    font-weight: 900;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .no-recipes {
@@ -867,11 +934,12 @@ body {
 .container header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
     gap: 1rem;
     margin-bottom: 2rem;
     padding: 0 1rem;
+    position: relative;
 }
 
 .container header h1 {
@@ -897,37 +965,45 @@ body {
     white-space: nowrap;
 }
 
+#get-started-btn {
+    position: absolute;
+    top: 0;
+    right: 1rem;
+    margin: 0;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#get-started-btn:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
     .container header {
         flex-direction: column;
         align-items: stretch;
         text-align: center;
+        padding-top: 3rem;
     }
     
-    .container header .header-actions {
-        flex-direction: column;
-        width: 100%;
+    #get-started-btn {
+        position: absolute;
+        top: 0;
+        right: 50%;
+        transform: translateX(50%);
+        width: auto;
+        margin-top: 1rem;
     }
     
-    .container header .btn {
-        width: 100%;
-    }
-    
-    .search-bar {
-        margin: 1rem auto;
-        padding: 0 0.5rem;
-    }
-
-    .search-bar input {
-        padding: 1rem 3rem 1rem 3rem;
-    }
-
-    .search-bar i.fas.fa-search {
-        left: 1rem;
-    }
-
-    .clear-search {
-        right: 1rem;
+    .container header .subtitle {
+        text-align: center;
     }
 }
 
@@ -941,76 +1017,90 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
 }
 
 .modal-content {
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: white;
-    margin: 2rem auto;
-    padding: 0;
+    padding: 2rem;
+    border-radius: 15px;
     width: 90%;
-    max-width: 800px;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    animation: modalSlideIn 0.3s ease;
+    max-width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure all modals have white background */
+#create-recipe-modal .modal-content,
+#recipe-modal .modal-content,
+#delete-modal .modal-content,
+#pantry-selection-modal .modal-content,
+#add-ingredient-modal .modal-content,
+#edit-profile-modal .modal-content,
+#change-password-modal .modal-content,
+#generate-from-pantry-modal .modal-content {
+    background: white;
 }
 
 .modal-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid #e5e7eb;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: white;
 }
 
 .modal-header h2 {
-    margin: 0;
+    color: #2c3e50;
     font-size: 1.5rem;
-    color: #1f2937;
+    margin: 0;
+    padding-right: 1rem;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
 }
 
-.close-modal {
-    background: none;
+.modal-header .favorite-btn,
+.modal-header .close-modal {
+    flex-shrink: 0;
+    margin-left: 0.5rem;
+    background: white;
+    color: #6b7280;
     border: none;
     font-size: 1.5rem;
-    color: #6b7280;
     cursor: pointer;
     padding: 0.5rem;
-    border-radius: 50%;
-    transition: all 0.2s ease;
-}
-
-.close-modal:hover {
-    background: #f3f4f6;
-    color: #374151;
+    line-height: 1;
 }
 
 .modal-body {
     padding: 1.5rem;
     max-height: 70vh;
     overflow-y: auto;
+    background: white;
 }
 
 .modal-body h3 {
-    color: #374151;
+    color: #2c3e50;
     margin: 1.5rem 0 1rem;
     font-size: 1.25rem;
+    font-weight: 600;
 }
 
-.modal-body ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.modal-body li {
-    padding: 0.5rem 0;
+.modal-body p {
     color: #4b5563;
-    border-bottom: 1px solid #e5e7eb;
-}
-
-.modal-body li:last-child {
-    border-bottom: none;
+    line-height: 1.6;
 }
 
 .modal-footer {
@@ -1019,92 +1109,154 @@ body {
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-}
-
-.btn-outline {
-    background: none;
-    border: 2px solid #2563eb;
-    color: #2563eb;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-outline:hover {
-    background: #2563eb;
-    color: white;
-}
-
-.btn-danger {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-danger:hover {
-    background: #dc2626;
-}
-
-.btn-secondary {
-    background: #6b7280;
-    color: white;
-    border: none;
-    padding: 0.6rem 1.2rem;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.btn-secondary:hover {
-    background: #4b5563;
-}
-
-.no-recipes {
-    text-align: center;
-    padding: 3rem;
     background: white;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(37, 99, 235, 0.1);
 }
 
-.no-recipes h3 {
-    color: #374151;
+/* Form styles within modals */
+.modal-body .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.modal-body .form-group label {
+    display: block;
+    font-size: 1rem;
+    color: #2c3e50;
     margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
-.no-recipes p {
-    color: #6b7280;
+.modal-body .form-group input[type="text"],
+.modal-body .form-group input[type="number"],
+.modal-body .form-group textarea,
+.modal-body .form-group select,
+.modal-body .form-group input[type="date"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    color: #2c3e50;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
-@keyframes modalSlideIn {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0);
-        opacity: 1;
+.modal-body .form-group input[type="text"]:focus,
+.modal-body .form-group input[type="number"]:focus,
+.modal-body .form-group textarea:focus,
+.modal-body .form-group select:focus,
+.modal-body .form-group input[type="date"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.modal-body .form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Ensure date input calendar icon is visible in dark mode */
+@media (prefers-color-scheme: dark) {
+    .modal-body .form-group input[type="date"] {
+        filter: invert(0);
     }
 }
 
-@media (max-width: 768px) {
-    #recipes-grid {
-        grid-template-columns: 1fr;
-        padding: 0 0.5rem;
+/* Pantry ingredients grid in generate modal */
+.pantry-ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+}
+
+.pantry-ingredient-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.pantry-ingredient-item:hover {
+    background: #e9ecef;
+}
+
+.pantry-ingredient-item input[type="checkbox"] {
+    margin-right: 0.75rem;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.pantry-ingredient-item label {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    flex: 1;
+    color: #2c3e50;
+}
+
+.pantry-ingredient-item .ingredient-name {
+    font-weight: 500;
+}
+
+.pantry-ingredient-item .ingredient-details {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+/* Ensure modal headings are dark even in dark mode */
+@media (prefers-color-scheme: dark) {
+    .modal-header h2 {
+        color: #2c3e50 !important;
     }
-    
-    .modal-content {
-        width: 95%;
-        margin: 1rem auto;
+
+    .modal-content,
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        background: white !important;
     }
-    
-    .modal-body {
-        max-height: 60vh;
+
+    .modal-body h3,
+    .modal-body p,
+    .modal-body label,
+    .modal-body input,
+    .modal-body textarea,
+    .modal-body select,
+    .pantry-ingredient-item label,
+    .pantry-ingredient-item .ingredient-name,
+    .pantry-ingredient-item .ingredient-details {
+        color: #2c3e50 !important;
+    }
+
+    .modal-body input[type="text"],
+    .modal-body input[type="number"],
+    .modal-body textarea,
+    .modal-body select {
+        background: white !important;
+        border-color: #e5e7eb !important;
+    }
+
+     .pantry-ingredients-grid {
+        background: white !important;
+        border-color: #e5e7eb !important;
+    }
+
+     .pantry-ingredient-item {
+        background: #f8f9fa !important;
+    }
+
+    .pantry-ingredient-item:hover {
+        background: #e9ecef !important;
     }
 }
 
@@ -1253,7 +1405,7 @@ body {
 }
 
 .submit-recipe-btn:hover {
-    background-color: #27ae60; /* Darker green */
+    background-color: #27ae60;
 }
 
 /* Dashboard Styles */
@@ -1367,28 +1519,26 @@ body {
 /* Header Styles */
 .page header {
     margin-bottom: 2rem;
-    /* Add flexbox for aligning items in the header */
     display: flex;
-    justify-content: space-between; /* Space out heading and button */
-    align-items: center; /* Vertically align items */
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
-    gap: 1rem; /* Add space between items if they wrap */
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .page header h1 {
-    margin: 0; /* Remove default margin to prevent extra space */
+    margin: 0;
 }
 
-/* Adjust margin for the button when it's in the header */
 .page header .btn {
-    margin-top: 0; /* Remove top margin */
+    margin-top: 0;
 }
 
 .chart-container {
     position: relative;
-    height: 250px; /* Adjust height as needed */
+    height: 250px;
     width: 100%;
-    border: 1px solid red; /* Temporary border for debugging */
+    border: 1px solid red;
 }
 
 .pantry-ingredient-item {
@@ -1439,25 +1589,25 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex; /* Keep flex for list items within category */
+    display: flex;
     flex-direction: column;
-    gap: 0.7rem; /* Slightly smaller gap than dashboard list */
+    gap: 0.7rem;
 }
 
 .pantry-category ul.ingredients-list li.ingredient-item {
-    background: none; /* Remove background from shared style */
+    background: none;
     padding: 0.6rem 0;
-    border-bottom: 1px dashed var(--secondary-color); /* Dashed border for items */
-    border-radius: 0; /* Remove border radius */
-    transition: none; /* Remove transition */
-    box-shadow: none; /* Remove shadow */
+    border-bottom: 1px dashed var(--secondary-color);
+    border-radius: 0;
+    transition: none;
+    box-shadow: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
 .pantry-category ul.ingredients-list li.ingredient-item:last-child {
-    border-bottom: none; /* No border on the last item */
+    border-bottom: none;
 }
 
 .pantry-category ul.ingredients-list li.ingredient-item span {
@@ -1466,21 +1616,20 @@ body {
 }
 
 .pantry-category .ingredient-actions .chip {
-    font-size: 0.8rem; /* Adjust chip size */
+    font-size: 0.8rem;
     padding: 0.3rem 0.6rem;
 }
 
 /* Adjust existing .ingredient-item styles if they conflict */
-/* (The specific overrides above should handle most conflicts) */
 
 /* --- Add Ingredient Modal Styles --- */
 .modal-body .form-group {
-    margin-bottom: 1rem; /* Adjust margin for form groups in modal */
+    margin-bottom: 1rem;
 }
 
 .modal-body .form-group label {
     display: block;
-    font-size: 0.9rem; /* Smaller font size for labels */
+    font-size: 0.9rem;
     color: var(--text-color);
     margin-bottom: 0.4rem;
     font-weight: 500;
@@ -1491,12 +1640,12 @@ body {
 .modal-body .form-group input[type="date"],
 .modal-body .form-group select {
     width: 100%;
-    padding: 0.6rem 0.8rem; /* Adjust padding */
+    padding: 0.6rem 0.8rem;
     border: 1px solid #dcdcdc;
     border-radius: var(--border-radius);
-    font-size: 0.9rem; /* Adjust font size */
+    font-size: 0.9rem;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    box-sizing: border-box;
 }
 
 .modal-body .form-group input[type="text"]:focus,
@@ -1513,12 +1662,12 @@ body {
     border-top: 1px solid #e5e7eb;
     display: flex;
     justify-content: flex-end;
-    gap: 0.8rem; /* Adjust gap between buttons */
+    gap: 0.8rem;
 }
 
 .modal-footer .btn {
-    padding: 0.6rem 1.2rem; /* Adjust button padding in footer */
-    font-size: 0.9rem; /* Adjust button font size in footer */
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
 }
 
 /* Pantry Selection Modal Styles */
@@ -1793,23 +1942,29 @@ body {
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 1000;
+    z-index: 1050;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    max-width: 400px;
+    pointer-events: none;
 }
 
 .notification {
-    background: white;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 15px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    border-left: 4px solid #4CAF50;
-    animation: slideIn 0.3s ease-out;
+    gap: 15px;
+    max-width: 300px;
+    pointer-events: all;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
 .notification.success {
@@ -1849,18 +2004,26 @@ body {
 .notification-close {
     background: none;
     border: none;
-    color: #666;
+    color: #6c757d;
     cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0;
-    margin-left: 10px;
+    font-size: 1.25rem;
+    padding: 0.25rem;
+    transition: color 0.2s ease;
 }
 
 .notification-close:hover {
-    color: #333;
+    color: #2c3e50;
 }
 
-@keyframes slideIn {
+.notification.notification-slide-in {
+    animation: slideInRight 0.3s forwards;
+}
+
+.notification.notification-slide-out {
+    animation: slideOutRight 0.3s forwards;
+}
+
+@keyframes slideInRight {
     from {
         transform: translateX(100%);
         opacity: 0;
@@ -1871,11 +2034,7 @@ body {
     }
 }
 
-.notification-slide-out {
-    animation: slideOut 0.3s ease-in forwards;
-}
-
-@keyframes slideOut {
+@keyframes slideOutRight {
     from {
         transform: translateX(0);
         opacity: 1;
@@ -1884,4 +2043,487 @@ body {
         transform: translateX(100%);
         opacity: 0;
     }
+}
+
+/* Profile Page Styles */
+.profile-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.profile-header {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.profile-info {
+    text-align: center;
+}
+
+.profile-info h2 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.profile-info p {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.stat {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease;
+}
+
+.stat:hover {
+    transform: translateY(-5px);
+}
+
+.stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.profile-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.profile-section {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Add specific style for account settings section */
+.profile-section.account-settings {
+    background: none;
+    box-shadow: none;
+    padding: 0;
+    margin-top: 2rem;
+}
+
+.profile-section h3 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 1rem;
+}
+
+/* Remove dark mode overrides for account settings */
+@media (prefers-color-scheme: dark) {
+    .profile-section.account-settings {
+        background: none !important;
+        box-shadow: none !important;
+    }
+}
+
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.form-group select,
+.form-group input {
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    background: white;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
+
+.checkbox-label:hover {
+    background-color: #f8f9fa;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.account-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+    background-color: #e2e8f0;
+    color: #2c3e50;
+}
+
+.btn-secondary:hover {
+    background-color: #cbd5e1;
+}
+
+.btn-danger {
+    background-color: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #dc2626;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    flex-shrink: 0;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 0.5rem;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Specific style for the recipe modal content */
+#recipe-modal .modal-content {
+    max-width: 800px;
+    background: white;
+}
+
+#recipe-modal .modal-header {
+    background: white;
+}
+
+#recipe-modal .modal-body {
+    background: white;
+}
+
+#recipe-modal .recipe-description,
+#recipe-modal .recipe-ingredients,
+#recipe-modal .recipe-instructions {
+    background: white;
+    color: #4b5563;
+}
+
+#recipe-modal .recipe-ingredients ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    margin: 1rem 0;
+}
+
+#recipe-modal .recipe-ingredients li {
+    margin-bottom: 0.5rem;
+    color: #4b5563;
+}
+
+#recipe-modal .recipe-instructions p {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: #4b5563;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-sections {
+        grid-template-columns: 1fr;
+    }
+
+    .account-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .profile-header,
+    .profile-section,
+    .form-group select,
+    .form-group input {
+        background: white !important;
+    }
+
+    .profile-info h2,
+    .profile-section h3,
+    .form-group label {
+        color: #2c3e50 !important;
+    }
+
+    .profile-info p {
+        color: #6c757d !important;
+    }
+}
+
+/* Authentication Pages Styles (Login and Register) */
+.auth-container {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    min-height: 100vh; /* Full viewport height */
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); /* Match body background */
+    padding: 2rem;
+    box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+.auth-box {
+    background: white; /* White background for the box */
+    padding: 3rem; /* Increased padding */
+    border-radius: 15px; /* Rounded corners */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Larger shadow */
+    text-align: center; /* Center text inside the box */
+    width: 100%;
+    max-width: 400px; /* Max width for the box */
+}
+
+.auth-header {
+    margin-bottom: 2rem;
+}
+
+.auth-header h1 {
+    color: #2c3e50;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+.auth-form .form-group {
+    margin-bottom: 1.5rem;
+    text-align: left; /* Align form elements to the left within the box */
+}
+
+.auth-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.auth-form input[type="email"],
+.auth-form input[type="password"],
+.auth-form input[type="text"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.auth-form input[type="email"]:focus,
+.auth-form input[type="password"]:focus,
+.auth-form input[type="text"]:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.auth-form .btn-primary {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+.auth-footer {
+    margin-top: 2rem;
+    color: #7f8c8d;
+}
+
+.auth-footer a {
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 480px) {
+    .auth-box {
+        padding: 2rem;
+    }
+
+    .auth-header h1 {
+        font-size: 1.8rem;
+    }
+}
+
+.ingredients-help {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+.ingredients-help p {
+    margin: 5px 0;
+}
+
+.ingredient-format {
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+.ingredient-examples {
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.ingredient-examples-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 5px 0;
+}
+
+.ingredient-examples-list li {
+    color: #666;
+    margin: 3px 0;
+}
+
+textarea#ingredients {
+    min-height: 120px;
+    font-family: monospace;
 }

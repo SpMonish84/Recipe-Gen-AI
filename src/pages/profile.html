@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Recipe AI</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>Recipe AI</h1>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="recipes.html" class="nav-link">
+                    <i class="fas fa-utensils"></i>
+                    <span>Recipes</span>
+                </a>
+                <a href="favorites.html" class="nav-link">
+                    <i class="fas fa-heart"></i>
+                    <span>Favorites</span>
+                </a>
+                <a href="pantry.html" class="nav-link">
+                    <i class="fas fa-carrot"></i>
+                    <span>Pantry</span>
+                </a>
+                <a href="upload.html" class="nav-link">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="profile.html" class="nav-link active">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <header>
+                    <h1>Profile</h1>
+                    <p class="subtitle">Manage your account settings and preferences</p>
+                </header>
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div class="profile-info">
+                            <h2 id="username">Loading...</h2>
+                            <p id="email">Loading...</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-sections">
+                        <!-- Dietary Preferences Section -->
+                        <div class="profile-section">
+                            <h3><i class="fas fa-apple-alt"></i> Dietary Preferences</h3>
+                            <form id="preferences-form" class="profile-form">
+                                <div class="form-group">
+                                    <label>Cooking Skill Level</label>
+                                    <select id="skill-level" name="cookingSkillLevel">
+                                        <option value="beginner">Beginner</option>
+                                        <option value="intermediate">Intermediate</option>
+                                        <option value="advanced">Advanced</option>
+                                        <option value="expert">Expert</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Meal Planning Preference</label>
+                                    <select id="meal-planning" name="mealPlanningPreferences">
+                                        <option value="daily">Daily</option>
+                                        <option value="weekly">Weekly</option>
+                                        <option value="monthly">Monthly</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Dietary Restrictions</label>
+                                    <div class="checkbox-group" id="dietary-restrictions">
+                                        <!-- Checkboxes will be added dynamically -->
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Preferred Cuisines</label>
+                                    <div class="checkbox-group" id="preferred-cuisines">
+                                        <!-- Checkboxes will be added dynamically -->
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Save Preferences</button>
+                            </form>
+                        </div>
+
+                        <!-- Account Settings Section -->
+                        <div class="profile-section account-settings">
+                            <h3><i class="fas fa-cog"></i> Account Settings</h3>
+                            <div class="account-actions">
+                                <button id="change-password-btn" class="btn btn-secondary">
+                                    <i class="fas fa-key"></i>
+                                    Change Password
+                                </button>
+                                <button id="logout-btn" class="btn btn-danger">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="change-password-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Change Password</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="change-password-form">
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../script.js?v=<%= Date.now() %>"></script>
+    <script src="../js/profile.js"></script>
+</body>
+</html> 

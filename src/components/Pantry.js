@@ -1,59 +1,9 @@
 class Pantry {
     constructor() {
-        // Initialize ingredients from localStorage or use mock data
-        const storedIngredients = localStorage.getItem('pantryIngredients');
-        if (storedIngredients) {
-            this.ingredients = JSON.parse(storedIngredients);
-        } else {
-            // Mock data for development with unique _id and expiry_date as Date objects
-            this.ingredients = [
-                {
-                    _id: this.generateUniqueId(),
-                    name: 'Tomatoes',
-                    quantity: 5,
-                    unit: 'pieces',
-                    expiry_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // Store as YYYY-MM-DD string
-                    category: 'Vegetables'
-                },
-                {
-                    _id: this.generateUniqueId(),
-                    name: 'Onions',
-                    quantity: 3,
-                    unit: 'pieces',
-                    expiry_date: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    category: 'Vegetables'
-                },
-                {
-                    _id: this.generateUniqueId(),
-                    name: 'Garlic',
-                    quantity: 2,
-                    unit: 'heads',
-                    expiry_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    category: 'Spices'
-                },
-                {
-                    _id: this.generateUniqueId(),
-                    name: 'Milk',
-                    quantity: 1,
-                    unit: 'liter',
-                    expiry_date: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-                    category: 'Dairy'
-                },
-                {
-                    _id: this.generateUniqueId(),
-                    name: 'Apple',
-                    quantity: 4,
-                    unit: 'pieces',
-                    expiry_date: '', // No expiry date
-                    category: 'Fruits'
-                }
-            ];
-            localStorage.setItem('pantryIngredients', JSON.stringify(this.ingredients));
-        }
-
+        this.ingredients = [];
         this.searchText = '';
         this.container = document.getElementById('pantry-container');
-        this.addIngredientDialog = null; // To hold the dialog element
+        this.addIngredientDialog = null;
 
         this.categories = ['Vegetables', 'Fruits', 'Dairy', 'Meat', 'Poultry', 'Fish', 'Grains', 'Spices', 'Herbs', 'Oils', 'Sauces', 'Other'];
 
@@ -66,11 +16,49 @@ class Pantry {
             'cups',
             'tablespoons',
             'teaspoons',
-            'pinch'
+            'pinch',
+            'packets'
         ];
 
-        this.render(); // Initial render
+        this.API_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+
+        this.loadUserPantry();
+        this.render();
         this.initEventListeners();
+    }
+
+    async loadUserPantry() {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${this.API_URL}/users/profile`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            // Check if the response is OK (status code 200-299)
+            if (!response.ok) {
+                const errorText = await response.text(); // Read response as text to see the error HTML
+                console.error('API response not OK:', response.status, response.statusText, errorText);
+                 // Attempt to parse JSON even if not OK, as some APIs might return error JSON
+                let errorData = null;
+                try {
+                    errorData = JSON.parse(errorText);
+                } catch (e) {
+                    // If parsing fails, the response is likely HTML
+                    console.error('Response is not valid JSON, likely HTML error page.');
+                }
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const userData = await response.json();
+            this.ingredients = userData.pantry || [];
+            this.render();
+        } catch (error) {
+            console.error('Error loading user pantry:', error);
+            this.ingredients = [];
+            this.render();
+        }
     }
 
     generateUniqueId() {

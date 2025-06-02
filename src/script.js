@@ -1,22 +1,54 @@
 // Navigation handling
 document.addEventListener('DOMContentLoaded', () => {
+    const currentPathname = window.location.pathname;
+    const currentPageFilename = currentPathname.split('/').pop(); // Get the last part (filename)
+
+    // Define filenames that should NOT redirect to dashboard
+    const authPageFilenames = ['login.html', 'register.html'];
+    const specificPageFilenames = ['recipes.html', 'favorites.html', 'pantry.html', 'upload.html', 'profile.html', 'dashboard.html', 'home.html'];
+
+    // Check if the current page filename is an auth page or a specific page
+    const isAuthPage = authPageFilenames.includes(currentPageFilename);
+    const isSpecificPage = specificPageFilenames.includes(currentPageFilename);
+    const isRootOrEmpty = currentPageFilename === '' || currentPageFilename === 'index.html'; // Consider index.html or empty string as root
+
+    // Redirect to dashboard if on root, empty path, or an unlisted filename that isn't auth/specific
+    if (!isAuthPage && !isSpecificPage && isRootOrEmpty) {
+        console.log('Redirecting to dashboard from:', currentPathname);
+        window.location.href = 'dashboard.html';
+    } else {
+        console.log('On a specific or auth page, no redirection needed.', currentPathname);
+    }
+
     const navLinks = document.querySelectorAll('.nav-link');
-    const pages = document.querySelectorAll('.page');
-
+    
     navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            // Remove active class from all links and pages
+        link.addEventListener('click', (e) => {
+            // Remove active class from all links
             navLinks.forEach(l => l.classList.remove('active'));
-            pages.forEach(p => p.classList.remove('active'));
-
+            
             // Add active class to clicked link
             link.classList.add('active');
-
-            // Show corresponding page
-            const pageId = `${link.dataset.page}-page`;
-            document.getElementById(pageId).classList.add('active');
+            
+            // Get the href from the link
+            const href = link.getAttribute('href');
+            
+            // If it's a relative URL, navigate to it
+            if (href && href.startsWith('./') || !href.startsWith('http')) {
+                e.preventDefault();
+                window.location.href = href;
+            }
         });
     });
+
+    // Add event listener for the 'Get Started' button on the dashboard
+    const getStartedBtn = document.getElementById('get-started-btn');
+    if (getStartedBtn) {
+        getStartedBtn.addEventListener('click', () => {
+            console.log('Get Started button clicked. Redirecting to register page.'); // Log click and redirect
+            window.location.href = 'register.html';
+        });
+    }
 
     // Initialize components - Removed: Components now self-initialize.
     // initializeComponents(); // Removed
