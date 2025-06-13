@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload - Recipe AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>Recipe AI</h1>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link"><i class="fas fa-chart-line"></i><span>Dashboard</span></a>
+                <a href="home.html" class="nav-link"><i class="fas fa-home"></i><span>Home</span></a>
+                <a href="recipes.html" class="nav-link"><i class="fas fa-utensils"></i><span>Recipes</span></a>
+                <a href="favorites.html" class="nav-link"><i class="fas fa-heart"></i><span>Favorites</span></a>
+                <a href="pantry.html" class="nav-link"><i class="fas fa-carrot"></i><span>Pantry</span></a>
+                <a href="upload.html" class="nav-link active"><i class="fas fa-upload"></i><span>Upload</span></a>
+                <a href="profile.html" class="nav-link"><i class="fas fa-user"></i><span>Profile</span></a>
+            </div>
+        </nav>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <header>
+                    <h1>Upload</h1>
+                    <p class="subtitle">Upload recipes or ingredient lists from images or documents</p>
+                </header>
+                <div class="upload-grid">
+                    <div class="upload-section">
+                        <h2>Upload File</h2>
+                        <div class="upload-box" id="upload-box">
+                            <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                            <p class="upload-text">Drag and drop your file here or click to browse</p>
+                            <input type="file" id="file-input" accept="image/*,.pdf,.doc,.docx,.txt">
+                            <button class="browse-btn" id="browse-btn">Browse Files</button>
+                        </div>
+                        <div id="selected-file" class="selected-file"></div>
+                        <div id="error-message" class="error-message"></div>
+                        <button id="process-btn" class="btn btn-success">
+                            <i class="fas fa-magic"></i> Process File
+                        </button>
+                    </div>
+                    <div class="upload-section">
+                        <h2>Extracted Items</h2>
+                        <div id="extracted-items" class="extracted-items">
+                            <p class="empty-message">No items extracted yet. Upload a file to begin.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Modal -->
+    <div id="loading-modal" class="loading-modal">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">Processing your file...</p>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../script.js?v=<%= Date.now() %>"></script>
+    <script src="../components/Upload.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Upload component
+            const upload = new Upload();
+        });
+    </script>
+</body>
+</html> 

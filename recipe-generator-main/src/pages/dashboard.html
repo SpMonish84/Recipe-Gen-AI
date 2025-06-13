@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Recipe AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="../styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>Recipe AI</h1>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link active">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="recipes.html" class="nav-link">
+                    <i class="fas fa-utensils"></i>
+                    <span>Recipes</span>
+                </a>
+                <a href="favorites.html" class="nav-link">
+                    <i class="fas fa-heart"></i>
+                    <span>Favorites</span>
+                </a>
+                <a href="pantry.html" class="nav-link">
+                    <i class="fas fa-carrot"></i>
+                    <span>Pantry</span>
+                </a>
+                <a href="upload.html" class="nav-link">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container dashboard-container">
+                <header>
+                    <h1>Dashboard</h1>
+                    <p class="subtitle">Overview of your recipe and pantry collection</p>
+                </header>
+                <section class="dashboard-stats-grid">
+                    <div class="stat-card">
+                        <i class="fas fa-utensils"></i>
+                        <h3>Total Recipes</h3>
+                        <p id="total-recipes">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-carrot"></i>
+                        <h3>Total Ingredients</h3>
+                        <p id="total-ingredients">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-heart"></i>
+                        <h3>Favorite Recipes</h3>
+                        <p id="total-favorites">0</p>
+                    </div>
+                    <div class="stat-card expiring-soon">
+                        <i class="fas fa-clock"></i>
+                        <h3>Expiring Soon</h3>
+                        <p id="expiring-soon-count">0</p>
+                    </div>
+                </section>
+
+                <section class="dashboard-details-section">
+                    <h2>Detailed Insights</h2>
+                    <div class="detail-card">
+                        <h3>Ingredients Expiring Soon</h3>
+                        <ul id="expiring-ingredients-list" class="expiring-list">
+                            <li>No ingredients expiring soon.</li>
+                        </ul>
+                    </div>
+                    <div class="detail-card chart-card">
+                        <h3>Ingredients Breakdown by Category</h3>
+                        <div class="chart-container">
+                            <canvas id="ingredientsChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="../script.js?v=<%= Date.now() %>"></script>
+    <script type="module">
+        import { Dashboard } from '../components/Dashboard.js';
+        import { showNotification } from '../js/utils.js'; // Assuming showNotification is used
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Dashboard DOM loaded, initializing Dashboard component');
+            const dashboard = new Dashboard();
+            await dashboard.loadAndRenderData(); // Call the main data loading and rendering method
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipes - Recipe AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>Recipe AI</h1>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="recipes.html" class="nav-link active">
+                    <i class="fas fa-utensils"></i>
+                    <span>Recipes</span>
+                </a>
+                <a href="favorites.html" class="nav-link">
+                    <i class="fas fa-heart"></i>
+                    <span>Favorites</span>
+                </a>
+                <a href="pantry.html" class="nav-link">
+                    <i class="fas fa-carrot"></i>
+                    <span>Pantry</span>
+                </a>
+                <a href="upload.html" class="nav-link">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+        </nav>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Notification Container -->
+            <div id="notification-container" class="notification-container"></div>
+            <div class="container">
+                <header>
+                    <h1>Recipes</h1>
+                    <p class="subtitle">Browse and manage your recipe collection</p>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" id="create-recipe-btn" aria-label="Create new recipe">
+                            <i class="fas fa-plus"></i> Create New Recipe
+                        </button>
+                        <button class="btn btn-primary" id="generate-from-pantry-btn" aria-label="Generate recipe from pantry">
+                            <i class="fas fa-magic"></i> Generate from Pantry
+                        </button>
+                    </div>
+                </header>
+                <div class="recipes-container">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="recipe-search" placeholder="Search recipes..." aria-label="Search recipes">
+                        <button class="clear-search" id="clear-search" aria-label="Clear search">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div id="recipes-grid" class="recipes-grid"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Recipe Details Modal -->
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-recipe-name"></h2>
+                <button class="favorite-btn" id="modal-favorite-btn" aria-label="Toggle favorite">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button class="close-modal" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-description"></div>
+                <div class="recipe-ingredients"></div>
+                <div class="recipe-instructions"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Confirm Delete</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this recipe? This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" id="cancel-delete">Cancel</button>
+                    <button class="btn btn-danger" id="confirm-delete">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Recipe Modal -->
+    <div id="create-recipe-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Recipe</h2>
+                <button class="close-modal" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="create-recipe-form">
+                    <div class="form-group">
+                        <label for="recipe-name">Recipe Title:</label>
+                        <input type="text" id="recipe-name" name="name" required minlength="3" maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipe-description">Description:</label>
+                        <textarea id="recipe-description" name="description" required minlength="10" maxlength="1000"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="ingredients">Ingredients:</label>
+                        <div class="ingredients-help">
+                            <p>Enter each ingredient on a new line using this format:</p>
+                            <p class="ingredient-format">ingredient name, quantity, unit</p>
+                            <p class="ingredient-examples">Examples:</p>
+                            <ul class="ingredient-examples-list">
+                                <li>Flour, 2, cups</li>
+                                <li>Sugar, 1, cup</li>
+                                <li>Eggs, 2, whole</li>
+                                <li>Milk, 250, ml</li>
+                            </ul>
+                        </div>
+                        <textarea id="ingredients" name="ingredients" required placeholder="Flour, 2, cups&#10;Sugar, 1, cup&#10;Eggs, 2, whole"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="instructions">Instructions (one step per line):</label>
+                        <textarea id="instructions" name="instructions" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="cooking-time">Cooking Time (minutes):</label>
+                        <input type="number" id="cooking-time" name="cooking-time" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="difficulty">Difficulty Level:</label>
+                        <select id="difficulty" name="difficulty" required>
+                            <option value="">Select difficulty</option>
+                            <option value="Easy">Easy</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="servings">Number of Servings:</label>
+                        <input type="number" id="servings" name="servings" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select id="category" name="category" required>
+                            <option value="">Select category</option>
+                            <option value="Breakfast">Breakfast</option>
+                            <option value="Lunch">Lunch</option>
+                            <option value="Dinner">Dinner</option>
+                            <option value="Dessert">Dessert</option>
+                            <option value="Snack">Snack</option>
+                            <option value="Beverage">Beverage</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Recipe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate from Pantry Modal -->
+    <div id="generate-from-pantry-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Generate Recipe from Pantry</h2>
+                <button class="close-modal" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="generate-recipe-form">
+                    <div class="form-group">
+                        <label for="pantry-ingredients">Select Ingredients from Your Pantry:</label>
+                        <div id="pantry-ingredients-list" class="pantry-ingredients-grid">
+                            <!-- Pantry ingredients will be populated here -->
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipe-type">Recipe Type:</label>
+                        <select id="recipe-type" required>
+                            <option value="">Select a type</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="dessert">Dessert</option>
+                            <option value="snack">Snack</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cooking-time">Preferred Cooking Time (minutes):</label>
+                        <input type="number" id="cooking-time" min="5" max="180" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Generate Recipe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import Recipes from '../components/Recipes.js';
+        import { showNotification } from '../js/utils.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.recipes = new Recipes();
+        });
+    </script>
+</body>
+</html> 

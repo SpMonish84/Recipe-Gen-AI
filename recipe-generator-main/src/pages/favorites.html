@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites - Recipe AI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>Recipe AI</h1>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="home.html" class="nav-link">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="recipes.html" class="nav-link">
+                    <i class="fas fa-utensils"></i>
+                    <span>Recipes</span>
+                </a>
+                <a href="favorites.html" class="nav-link active">
+                    <i class="fas fa-heart"></i>
+                    <span>Favorites</span>
+                </a>
+                <a href="pantry.html" class="nav-link">
+                    <i class="fas fa-carrot"></i>
+                    <span>Pantry</span>
+                </a>
+                <a href="upload.html" class="nav-link">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <header>
+                    <h1>Favorite Recipes</h1>
+                    <p class="subtitle">Your collection of favorite recipes</p>
+                </header>
+                <div class="recipes-container">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="recipe-search" placeholder="Search favorite recipes...">
+                        <button class="clear-search" id="clear-search" aria-label="Clear search" title="Clear search"><i class="fas fa-times"></i></button>
+                    </div>
+                    <div id="recipes-grid"></div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+    </div>
+
+    <!-- Recipe Details Modal -->
+    <div id="recipe-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-recipe-name"></h2>
+                <button class="favorite-btn" id="modal-favorite-btn" aria-label="Remove from favorites" title="Remove from favorites">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <button class="close-modal" aria-label="Close modal" title="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="recipe-description"></div>
+                <div class="recipe-ingredients"></div>
+                <div class="recipe-instructions"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="delete-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Delete Recipe</h2>
+                <button class="close-modal" aria-label="Close modal" title="Close modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this recipe? This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-delete" aria-label="Cancel deletion" title="Cancel deletion">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete" aria-label="Confirm deletion" title="Confirm deletion">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="../js/favorites.js"></script>
+</body>
+</html> 

@@ -1,0 +1,113 @@
+body{
+    background-color: antiquewhite;
+    font-family: "Urbanist", sans-serif;
+    font-weight: 600;
+    background-image: url(https://i.pinimg.com/564x/e9/36/06/e936061fa6d5494cb4241a3d6db37163.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    
+}
+header{
+    margin-bottom: 30px;
+}
+
+h1{
+    font-weight: bolder;
+    font-size: 36px;
+    line-height: 1.5;
+    color: black;
+    text-align: center;
+}
+
+a{
+    color: #272044;
+
+}
+
+
+.container{
+    margin: 120px auto;
+    max-width: 600px;
+}
+
+form{
+    display: flex;
+}
+
+.form-container{
+    background-color: white;
+    margin-bottom: 30px;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0px 10px 60px rgba(65, 50, 100, 0.08);
+}
+
+.instructions{
+    padding: 16px;
+    border: 1px solid rgba(39, 33, 66, 0.5);
+    width: 80%;
+    font-size: 16px;
+    border-radius: 50px;
+    line-height: 20px;
+    color: #272044;
+}
+.hint{
+    line-height: 1.5;
+    font-size: 14px;
+    margin-top: 5px;
+    opacity: 0.6;
+}
+
+.submit-button{
+    margin-left: 10px;
+    background-color: #272044;
+    color: white;
+    border: none;
+    width: 150px;
+    font-size: 16px;
+    border-radius: 50px;
+    padding: 14px 24px;
+}
+
+.recipe{
+    font-size: 16px;
+    background-color: white;
+    padding: 20px;
+    line-height: 2;
+    font-weight: 400;
+    border-left: 3px solid #272044;
+    box-shadow: 0px 10px 60px rgba(65, 50, 100, 0.08);
+
+}
+
+.hidden{
+    display: none;
+}
+
+.recipe strong{
+    color: #272044;
+    font-size: 20px;
+}
+
+footer{
+    text-align: center;
+    font-size: 14px;
+    margin-top: 30px;
+    font-weight: bolder;
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+.blink{
+    animation: blink 1s infinite;
+}

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Recipe AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/typewriter-effect@latest/dist/core.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <h1>Recipe AI</h1>
+            </div>
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="home.html" class="nav-link active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="recipes.html" class="nav-link">
+                    <i class="fas fa-utensils"></i>
+                    <span>Recipes</span>
+                </a>
+                <a href="favorites.html" class="nav-link">
+                    <i class="fas fa-heart"></i>
+                    <span>Favorites</span>
+                </a>
+                <a href="pantry.html" class="nav-link">
+                    <i class="fas fa-carrot"></i>
+                    <span>Pantry</span>
+                </a>
+                <a href="upload.html" class="nav-link">
+                    <i class="fas fa-upload"></i>
+                    <span>Upload</span>
+                </a>
+                <a href="profile.html" class="nav-link">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <header>
+                    <h1>Recipe AI</h1>
+                    <p class="subtitle">Your personal AI chef</p>
+                </header>
+                <div class="form-container">
+                    <form id="recipe-generator-form">
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                placeholder="What would you like to cook today?"
+                                autofocus
+                                required
+                                autocomplete="off"
+                                class="instructions"
+                                id="user-instructions"
+                            />
+                            <button type="submit" class="submit-button">
+                                <span>Generate</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="hint">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Try: pasta, cake, curry, or any dish you'd like to make</span>
+                    </div>
+                </div>
+                <!-- Container for generated recipe and save button -->
+                <div id="generated-recipe-container" class="generated-recipe-container hidden">
+                    <div class="recipe" id="recipe">
+                        <div class="loading-spinner hidden">
+                            <div class="spinner"></div>
+                            <p>Creating your recipe...</p>
+                        </div>
+                    </div>
+                    <!-- Save Recipe Button -->
+                    <button class="btn btn-success hidden" id="save-recipe-btn">Save to Recipes</button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Notification Container -->
+        <div id="notification-container" class="notification-container"></div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/typewriter-js@2.18.2/dist/core.js"></script>
+    <script src="../script.js?v=<%= Date.now() %>"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set up navigation
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                });
+            });
+
+            // Initialize recipe generator form
+            const recipeForm = document.getElementById('recipe-generator-form');
+            if (recipeForm) {
+                recipeForm.addEventListener('submit', generateRecipe);
+            }
+        });
+    </script>
+</body>
+</html> 
